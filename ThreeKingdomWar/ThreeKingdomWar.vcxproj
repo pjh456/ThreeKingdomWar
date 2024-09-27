@@ -132,7 +132,9 @@
     <ClInclude Include="token.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ac_automaton_test.cpp" />
     <ClCompile Include="lexer.cpp" />
+    <ClCompile Include="lexer_test.cpp" />
     <ClCompile Include="token.cpp" />
     <ClCompile Include="token_test.cpp" />
   </ItemGroup>

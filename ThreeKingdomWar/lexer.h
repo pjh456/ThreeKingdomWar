@@ -15,14 +15,16 @@ public:
 
 	Lexer(const std::string& text);
 
+	Token get_next_token();
+
 private:
 	std::string input;
 
-	size_t position;
-	size_t read_position;
+	size_t position				= 0;		// 当前位置
+	size_t read_position		= 0;		// 读取到的位置
 
-	char current_char;
-	ACAutoMaton* ac_automaton = nullptr;
+	char current_char			=' ';		// 当前字符
+	ACAutoMaton* ac_automaton	= nullptr;	// AC自动机
 
 	void read_char();
 };

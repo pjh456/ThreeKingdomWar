@@ -47,5 +47,11 @@
     <ClCompile Include="token.cpp">
       <Filter>源文件\Interpreters</Filter>
     </ClCompile>
+    <ClCompile Include="lexer_test.cpp">
+      <Filter>源文件\tests\interpreters_tests</Filter>
+    </ClCompile>
+    <ClCompile Include="ac_automaton_test.cpp">
+      <Filter>源文件\tests\interpreters_tests</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

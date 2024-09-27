@@ -11,14 +11,23 @@
 class ACAutoMaton
 {
 public:
-	ACAutoMaton() = default;
-	~ACAutoMaton() = default;
+	ACAutoMaton()
+	{
+		Node* root = new Node(this, ' ', TokenType::UNKNOWN);
+		nodes.push_back(root);
+	}
+	~ACAutoMaton()
+	{
+		for (auto node : nodes)
+			delete node;
+		return;
+	}
 
 	// 查询保留字
 	const TokenType find_key(const std::string input)
 	{
 		Node* current_node = this->get_node(input);
-		return current_node ? current_node->get_type() : TokenType::ERROR;
+		return current_node ? current_node->get_type() : TokenType::UNKNOWN;
 	}
 
 	// 添加一个新的保留字
@@ -36,8 +45,8 @@ private:
 		Node() = default;
 		~Node() = default;
 
-		Node(char ch, TokenType type):
-			ch(ch), count(1), type(type) { }
+		Node(ACAutoMaton* parent, char ch, TokenType type) :
+			parent(parent), ch(ch), count(1), type(type) { }
 
 		const int get_count() const
 		{
@@ -56,25 +65,26 @@ private:
 
 		Node* get_son_node(char ch) const
 		{
-			return nodes[ch];
+			return nodes[(int)ch];
 		}
 
-		// 添加一个新节点，但路径上的节点是不可用的，所以用 ERROR 替代
-		Node* add_child(char ch, TokenType type = TokenType::ERROR)
+		// 添加一个新节点，但路径上的节点是不可用的，所以用 UNKNOWN 替代
+		Node* add_child(char ch, TokenType type = TokenType::UNKNOWN)
 		{
 			if (!nodes[(int)ch])
 			{
-				nodes[(int)ch] = new Node(ch, type);
+				parent->nodes.push_back(nodes[(int)ch] = new Node(parent, ch, type));
 				count++;
 			}
 			return nodes[(int)ch];
 		}
 
 	private:
+		ACAutoMaton* parent;				// 所属AC自动机
 		char ch;							// 节点上的字符
 		int count = 0;						// 记录路径上节点个数
-		TokenType type = TokenType::ERROR;	// 对应的语义标记
-		Node* nodes[200] = { nullptr };		// 子节点
+		TokenType type = TokenType::UNKNOWN;	// 对应的语义标记
+		Node* nodes[256] = { nullptr };		// 子节点
 
 	};
 
@@ -85,18 +95,21 @@ private:
 		Node* current_node = nodes[0];
 		for (int i = 0; i < input.size(); ++i)
 		{
-			if (current_node->get_son_node(input[i]))
-				current_node = current_node->get_son_node(input[i]);
-			else if (create_new_node)
-				current_node = current_node->add_child(input[i]);
-			else
-				return nullptr;
+			Node* son = current_node->get_son_node(input[i]);
+			if (!son)
+			{
+				if (create_new_node)
+					son = current_node->add_child(input[i]);
+				else
+					return nullptr;
+			}
+			current_node = son;
 		}
 		return current_node;
 	}
 
 private:
-	std::vector<Node*> nodes = std::vector<Node*>(1);
+	std::vector<Node*> nodes;
 
 };
 

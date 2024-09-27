@@ -6,7 +6,7 @@
 
 enum class TokenType
 {
-	ERROR,
+	UNKNOWN,
 	// ÔËËã·û
 	PLUS,	// +
 	MINUS,	// -
