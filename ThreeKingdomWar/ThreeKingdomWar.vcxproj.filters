@@ -39,6 +39,9 @@
     <ClInclude Include="parser.h">
       <Filter>头文件\Interpreters</Filter>
     </ClInclude>
+    <ClInclude Include="ast_nodes.h">
+      <Filter>头文件\Interpreters</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="token_test.cpp">
