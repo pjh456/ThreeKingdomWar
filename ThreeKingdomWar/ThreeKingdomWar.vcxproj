@@ -129,12 +129,15 @@
   <ItemGroup>
     <ClInclude Include="ac_automaton.h" />
     <ClInclude Include="lexer.h" />
+    <ClInclude Include="parser.h" />
     <ClInclude Include="token.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ac_automaton_test.cpp" />
     <ClCompile Include="lexer.cpp" />
     <ClCompile Include="lexer_test.cpp" />
+    <ClCompile Include="parser.cpp" />
+    <ClCompile Include="parser_test.cpp" />
     <ClCompile Include="token.cpp" />
     <ClCompile Include="token_test.cpp" />
   </ItemGroup>

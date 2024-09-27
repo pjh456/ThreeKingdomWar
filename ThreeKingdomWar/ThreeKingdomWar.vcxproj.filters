@@ -36,6 +36,9 @@
     <ClInclude Include="ac_automaton.h">
       <Filter>头文件\Interpreters</Filter>
     </ClInclude>
+    <ClInclude Include="parser.h">
+      <Filter>头文件\Interpreters</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="token_test.cpp">
@@ -51,6 +54,12 @@
       <Filter>源文件\tests\interpreters_tests</Filter>
     </ClCompile>
     <ClCompile Include="ac_automaton_test.cpp">
+      <Filter>源文件\tests\interpreters_tests</Filter>
+    </ClCompile>
+    <ClCompile Include="parser.cpp">
+      <Filter>源文件\Interpreters</Filter>
+    </ClCompile>
+    <ClCompile Include="parser_test.cpp">
       <Filter>源文件\tests\interpreters_tests</Filter>
     </ClCompile>
   </ItemGroup>

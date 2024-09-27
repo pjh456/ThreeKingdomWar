@@ -1,23 +1,37 @@
-
-
+/*
 #include <iostream>
-#include "string"
-
+#include <string>
 #include "lexer.h"
 
-
-int main()
-{
-	Lexer lexer1 = Lexer("WOaas");
-	Lexer lexer2 = Lexer("7142");
-	Lexer lexer3 = Lexer("1 +");
-	Lexer lexer4 = Lexer("aaaa");
-
-	std::cout << lexer1.get_next_token() << std::endl;
-	std::cout << lexer2.get_next_token() << std::endl;
-	std::cout << lexer3.get_next_token() << std::endl;
-	std::cout << lexer3.get_next_token() << std::endl;
-	std::cout << lexer4.get_next_token() << std::endl;
-	return 0;
+void test_lexer(const std::string& input) {
+    Lexer lexer(input);
+    Token token(TokenType::UNKNOWN, " ");
+    do {
+        token = lexer.get_next_token();
+        std::cout << "Token: " << static_cast<int>(token.type) << ", Value: " << token.value << std::endl;
+    } while (token.type != TokenType::UNKNOWN); // Assuming UNKNOWN indicates end
 }
 
+int main() {
+    std::cout << "Testing identifiers and keywords:\n";
+    test_lexer("int myVar; float number; Func myFunc;");
+
+    std::cout << "\nTesting numbers:\n";
+    test_lexer("42 100 3.14");
+
+    std::cout << "\nTesting operators:\n";
+    test_lexer("a + b - c * d / e;");
+
+    std::cout << "\nTesting strings:\n";
+    test_lexer("\"Hello, World!\" 'Single quotes'");
+
+    std::cout << "\nTesting comments:\n";
+    test_lexer("# This is a comment\nint validVar; # Another comment");
+
+    std::cout << "\nTesting mixed input:\n";
+    test_lexer("Func testFunc() { int x = 5; } # This is a comment");
+
+    return 0;
+}
+
+*/
