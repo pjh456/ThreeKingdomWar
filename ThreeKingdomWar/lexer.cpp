@@ -1,7 +1,7 @@
 #include "lexer.h"
 
 Lexer::Lexer(const std::string& text) :
-	input(text)
+	input(text), current_char(text[0])
 {
 	this->read_char();
 	ac_automaton = new ACAutoMaton();
@@ -41,53 +41,80 @@ Lexer::~Lexer() = default;	// 这里以后可能要销毁AC自动机
 
 Token Lexer::get_next_token()
 {
-	std::string  buffer;
+	std::string buffer;
 	TokenType type = TokenType::UNKNOWN;
 
 	// 跳过空格
 	while (isspace(current_char))
 		this->read_char();
+    //std::cout << current_char << std::endl;
+    //std::cout << isalnum(current_char) << std::endl;
+    //std::cout << isdigit(current_char) << std::endl;
 
-	// 尝试读取多字符标记
-	while (isalnum(current_char) || current_char == '_' || current_char == '=')
-	{
-		buffer.push_back(current_char);
-		this->read_char();
-		type = ac_automaton->find_key(buffer);
-
-		if (type != TokenType::UNKNOWN)
-			break;
+    // 尝试读取多字符标记
+    if (isalpha(current_char) || current_char == '_') {
+        while (isalpha(current_char) || current_char == '_' || isdigit(current_char)) {
+            buffer.push_back(current_char);
+            this->read_char();
+        }
+        type = ac_automaton->find_key(buffer); // 使用AC自动机查找关键字
+        if (type == TokenType::UNKNOWN) {
+            return Token(TokenType::IDENTIFIER, buffer); // 处理标识符
+        }
+    }
+    else if (isdigit(current_char)) {
+        do {
+            buffer.push_back(current_char);
+            this->read_char();
+        } while (isdigit(current_char));
+        return Token(TokenType::INTEGER, buffer); // 处理数字
+    }
+    else if (isalpha(current_char)) {
+        do {
+            buffer.push_back(current_char);
+            this->read_char();
+        } while (isalpha(current_char));
+        return Token(TokenType::IDENTIFIER, buffer); // 处理标识符
+    }
+    else {
+        // 处理单字符运算符和其他符号
+        switch (current_char) {
+        case '+':
+            this->read_char();
+            return Token(TokenType::PLUS, "+");
+        case '-':
+            this->read_char();
+            return Token(TokenType::MINUS, "-");
+        case '*':
+            this->read_char();
+            return Token(TokenType::MUL, "*");
+        case '/':
+            this->read_char();
+            return Token(TokenType::DIV, "/");
+        case '(':
+            this->read_char();
+            return Token(TokenType::LPAREN, "(");
+        case ')':
+            this->read_char();
+            return Token(TokenType::RPAREN, ")");
+        case '=':
+            buffer.push_back(current_char);
+            this->read_char();
+            if (current_char == '=') {
+                buffer.push_back(current_char);
+                this->read_char();
+                return Token(TokenType::EQUAL, "==");
+            }
+            else {
+                return Token(TokenType::ASSIGN, "=");
+            }
+        default:
+            std::cerr << "Unknown Token '" << current_char << "'" << std::endl;
+            this->read_char();
+            return Token(TokenType::UNKNOWN, buffer);
+        }
 	}
-
-	if (type == TokenType::UNKNOWN)
-	{
-		if (isdigit(current_char))
-		{
-			do
-			{
-				buffer.push_back(current_char);
-				this->read_char();
-			}
-			while (isdigit(current_char));
-			return Token(TokenType::ITERGER, buffer);
-		}
-		else if (isalpha(current_char))
-		{
-			do
-			{
-				buffer.push_back(current_char);
-				this->read_char();
-			} while (isalpha(current_char));
-			return Token(TokenType::IDENTIFIER, buffer);
-		}
-		else
-		{
-			std::cerr << "Unknown Token '" << buffer << "'" << std::endl;
-			this->read_char();
-		}
-
-		return Token(type, buffer);
-	}
+    return Token(type, buffer);
 }
 
 void Lexer::read_char()

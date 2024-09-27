@@ -13,6 +13,7 @@ enum class TokenType
 	MUL,	// *
 	DIV,	// /
 	ASSIGN,	// =
+	EQUAL,	// ==
 
 	// 标识符
 	LPAREN,	// (
@@ -28,7 +29,7 @@ enum class TokenType
 	
 	// 抽象定义
 	IDENTIFIER,	// 变量
-	ITERGER,	// 数字
+	INTEGER,	// 数字
 	EOF_TOKEN,	// 结束标记
 
 
