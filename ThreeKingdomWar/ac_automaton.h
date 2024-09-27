@@ -6,7 +6,7 @@
 
 #include "token.h"
 
-/*
+
 // 用于匹配词法分析器
 class ACAutoMaton
 {
@@ -100,5 +100,5 @@ private:
 
 };
 
-*/
+
 #endif // !_AC_AUTOMATON_H_

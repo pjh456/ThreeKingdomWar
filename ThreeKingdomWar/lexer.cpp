@@ -1,4 +1,4 @@
-//#include "lexer.h"
+#include "lexer.h"
 
 /*
 Lexer::Lexer(const std::string& text) :

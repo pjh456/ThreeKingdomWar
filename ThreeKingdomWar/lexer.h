@@ -7,8 +7,7 @@
 #include "ac_automaton.h"
 #include "token.h"
 
-// 
-/*
+// ´Ê·¨·ÖÎöÆ÷
 class Lexer
 {
 public:
@@ -27,5 +26,5 @@ private:
 
 	void read_char();
 };
-*/
+
 #endif // !_LEXER_H_
