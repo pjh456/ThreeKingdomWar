@@ -16,6 +16,14 @@ void Parser::parse()
         case TokenType::STRING:
         case TokenType::LIST:
 
+        case TokenType::RETURN:
+        case TokenType::WHILE:
+        case TokenType::FOR:
+        case TokenType::IF:
+        case TokenType::ELSE:
+        case TokenType::BREAK:
+        case TokenType::CONTINUE:
+
         case TokenType::IDENTIFIER:
             parse_statement(); // 处理变量声明或赋值
             break;
@@ -134,10 +142,10 @@ int Parser::parse_statement()
 
         // 解析循环体
         eat(TokenType::LBRACE);
-        while (condition_result) {
+        while(current_token.type !=TokenType::RBRACE)
             parse_statement(); // 处理循环体
-        }
         eat(TokenType::RBRACE);
+        return 0;
     }
 
     // 处理for循环
@@ -159,9 +167,11 @@ int Parser::parse_statement()
         // 解析循环体
         eat(TokenType::LBRACE);
 
+        parse_statement();
         // TODO:处理循环体
 
         eat(TokenType::RBRACE);
+        return 0;
     }
     // 处理条件语句
     else if (current_token.type == TokenType::IF) {
@@ -182,6 +192,8 @@ int Parser::parse_statement()
             parse_statement(); // 处理 else 体
             eat(TokenType::RBRACE);
         }
+
+        return 0;
     }
 
     // 处理break

@@ -8,6 +8,7 @@
 
 #include "token.h"
 #include "lexer.h"
+#include "variable_manager.h"
 
 class Parser {
 public:
@@ -18,6 +19,7 @@ public:
 private:
     Lexer& lexer;
     Token current_token;
+    VariableManager variable_manager;
 
     int parse_function_declearation(); //½âÎöº¯ÊıÉùÃ÷
 

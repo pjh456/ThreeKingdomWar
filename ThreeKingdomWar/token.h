@@ -78,7 +78,11 @@ public:
 		return type == other.type && value == other.value;
 	}
 
-	friend std::ostream& operator<<(std::ostream& os, const Token& token);
+	friend std::ostream& operator<<(std::ostream& os, const Token& token)
+	{
+		return os << "Token<" << static_cast<int>(token.type) << ", " << token.value << ">";
+	}
 
 };
+
 #endif // !_TOKEN_H_

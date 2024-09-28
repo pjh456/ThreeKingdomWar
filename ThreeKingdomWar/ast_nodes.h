@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <string>
+#include <iostream>
 
 #include "token.h"
 
@@ -23,7 +24,6 @@ enum class ASTNodeType
 	UNARY_EXPRESSION,	// 一元表达式
 
 	ASSIGNMENT,		// 赋值
-	FUNCTION_CALL,	// 函数调用
 	BLOCK,			// 代码块
 
 	// 函数
@@ -35,7 +35,8 @@ enum class ASTNodeType
 	WHILE_STATEMENT,	// 循环语句
 	FOR_STATEMENT,
 	CONTINUE_STATEMENT,
-	BREAK_STATEMENT
+	BREAK_STATEMENT,
+	RETURN_STATEMENT
 
 };
 
@@ -147,11 +148,12 @@ private:
 	bool value;
 };
 
-// 变量标识符节点
+// 变量标识符节点（整合其他基本类型）
 class IdentifierNode :public ASTNode
 {
 public:
-	IdentifierNode(const std::string& name): name(name) {}
+	IdentifierNode(const std::string& name, ASTNode* value): 
+		name(name), value(value) {}
 
 	ASTNodeType get_type() const override
 	{
@@ -163,8 +165,20 @@ public:
 		return name;
 	}
 
+	const ASTNode* get_value() const
+	{
+		return value;
+	}
+
+	friend std::ostream& operator<<(std::ostream& os, const IdentifierNode& node)
+	{
+		return os << "IdentifierNode<" << node.name << ", " << static_cast<int>(node.value->get_type()) << ">";
+	}
+
+
 private:
 	std::string name;
+	ASTNode* value;
 };
 
 // 二元表达式节点
@@ -372,24 +386,29 @@ private:
 };
 
 // 循环节点
-class ForStatementNode : public ASTNode {
+class ForStatementNode : public ASTNode 
+{
 public:
 	ForStatementNode(IdentifierNode* object, ASTNode* objects, BlockNode* block)
 		: object(object), objects(objects), block(block) {}
 
-	ASTNodeType get_type() const override {
+	ASTNodeType get_type() const override 
+	{
 		return ASTNodeType::FOR_STATEMENT;
 	}
 
-	IdentifierNode* get_object() const {
+	IdentifierNode* get_object() const 
+	{
 		return object;
 	}
 
-	ASTNode* get_objects() const {
+	ASTNode* get_objects() const 
+	{
 		return objects;
 	}
 
-	BlockNode* get_block() const {
+	BlockNode* get_block() const 
+	{
 		return block;
 	}
 
@@ -400,37 +419,42 @@ private:
 };
 
 // continue语句节点
-class ContinueStatementNode : public ASTNode {
+class ContinueStatementNode : public ASTNode 
+{
 public:
-	ASTNodeType get_type() const override {
+	ASTNodeType get_type() const override 
+	{
 		return ASTNodeType::CONTINUE_STATEMENT;
 	}
 };
 
 // break语句节点
-class BreakStatementNode : public ASTNode {
+class BreakStatementNode : public ASTNode 
+{
 public:
-	ASTNodeType get_type() const override {
+	ASTNodeType get_type() const override 
+	{
 		return ASTNodeType::BREAK_STATEMENT;
 	}
 };
 
 // return语句节点
-class ReturnStatementNode : public ASTNode {
+class ReturnStatementNode : public ASTNode 
+{
 public:
-	ReturnStatementNode(ASTNode* value = nullptr) : value(value) {}
+	//ReturnStatementNode(ASTNode* value = nullptr) : value(value) {}
 
-	ASTNodeType get_type() const override {
+	ASTNodeType get_type() const override 
+	{
 		return ASTNodeType::RETURN_STATEMENT;
 	}
 
-	ASTNode* get_value() const {
-		return value;
-	}
-
-private:
-	ASTNode* value; // 可以是返回值，也可以是空（无返回值）
+//private:
+	//暂时不考虑返回值部分
+	//ASTNode* value; // 可以是返回值，也可以是空（无返回值）
 };
+
+
 
 
 #endif // !_AST_NODES_H_

@@ -136,11 +136,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ac_automaton_test.cpp" />
+    <ClCompile Include="ast_nodes.cpp" />
     <ClCompile Include="lexer.cpp" />
     <ClCompile Include="lexer_test.cpp" />
     <ClCompile Include="parser.cpp" />
     <ClCompile Include="parser_test.cpp" />
-    <ClCompile Include="token.cpp" />
     <ClCompile Include="token_test.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
