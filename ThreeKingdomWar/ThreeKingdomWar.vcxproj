@@ -129,14 +129,16 @@
   <ItemGroup>
     <ClInclude Include="ac_automaton.h" />
     <ClInclude Include="ast_nodes.h" />
+    <ClInclude Include="interpreter.h" />
     <ClInclude Include="lexer.h" />
     <ClInclude Include="parser.h" />
     <ClInclude Include="token.h" />
-    <ClInclude Include="variable_manager.h" />
+    <ClInclude Include="variable_table.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ac_automaton_test.cpp" />
     <ClCompile Include="ast_nodes.cpp" />
+    <ClCompile Include="interpreter.cpp" />
     <ClCompile Include="lexer.cpp" />
     <ClCompile Include="lexer_test.cpp" />
     <ClCompile Include="parser.cpp" />

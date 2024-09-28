@@ -136,10 +136,9 @@ ASTNode* Parser::parse_statement()
             if (current_token.type == TokenType::ASSIGN) {
                 eat(TokenType::ASSIGN);
                 ASTNode* expression = parse_expression(); // 解析赋值表达式
-                variable_manager.define(var_name, expression);
                 eat(TokenType::SEMICOLON); // 处理分号
 
-                return new AssignmentNode(variable_manager.get(var_name), expression);
+                return new AssignmentNode(new IdentifierNode(var_name), expression);
             }
 
             eat(TokenType::SEMICOLON); // 处理分号
@@ -330,7 +329,7 @@ ASTNode* Parser::parse_factor()
     else if (current_token.type == TokenType::IDENTIFIER) {
         std::string var_name = current_token.value;
         eat(TokenType::IDENTIFIER);
-        return variable_manager.get(var_name);
+        return new IdentifierNode(var_name);
     }
     else if (current_token.type == TokenType::LPAREN) {
         eat(TokenType::LPAREN);

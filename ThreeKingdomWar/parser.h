@@ -8,7 +8,6 @@
 
 #include "token.h"
 #include "lexer.h"
-#include "variable_manager.h"
 #include "ast_nodes.h"
 
 class Parser {
@@ -20,7 +19,6 @@ public:
 private:
     Lexer& lexer;
     Token current_token;
-    VariableManager variable_manager;
 
     ASTNode* parse_function_declaration(); //½âÎöº¯ÊıÉùÃ÷
 

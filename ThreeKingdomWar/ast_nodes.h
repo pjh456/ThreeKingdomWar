@@ -4,7 +4,6 @@
 #include <vector>
 #include <string>
 #include <iostream>
-#include <variant>
 #include <stdexcept>
 
 #include "token.h"
@@ -55,6 +54,7 @@ class ASTNode
 public:
 	virtual ~ASTNode() = default;
 	virtual ASTNodeType get_type() const = 0;
+	
 };
 
 // 代码块节点
@@ -178,6 +178,22 @@ private:
 	bool value;
 };
 
+class NumberNode: public ASTNode
+{
+public:
+	NumberNode(const IntegerNode* value) :
+		value((float)value->get_value()) {}
+	NumberNode(const FloatNode* value) :
+		value(value->get_value()) {}
+	NumberNode(const BooleanNode* value) :
+		value((float)value->get_value()) {}
+
+	
+private:
+	float value;
+};
+
+// 列表节点
 class ListNode :public ASTNode
 {
 public:
@@ -437,6 +453,8 @@ public:
 		return body;
 	}
 
+	void call();
+
 private:
 	std::string name;
 	std::vector<IdentifierNode*> parameters;
@@ -469,19 +487,6 @@ public:
 private:
 	std::string name;
 	std::vector<ASTNode*> arguments;
-};
-
-class PrintCallNode :public FunctionCallNode
-{
-public:
-	PrintCallNode(const std::vector<ASTNode*>& arguments): FunctionCallNode("print", arguments) {}
-
-	void execute()
-	{
-		for (ASTNode* arg : get_arguments()) {
-			std::cout << arg << std::endl; // 打印值
-		}
-	}
 };
 
 // continue语句节点
