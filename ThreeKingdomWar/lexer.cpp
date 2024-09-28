@@ -22,6 +22,11 @@ Lexer::Lexer(const std::string& text) :
 			ac_automaton->add_key("(", TokenType::LPAREN);
 			ac_automaton->add_key(")", TokenType::RPAREN);
 			ac_automaton->add_key(";", TokenType::SEMICOLON);
+            // 注释直接判断就行
+            ac_automaton->add_key("{", TokenType::LBRACE);
+            ac_automaton->add_key("}", TokenType::RBRACE);
+            ac_automaton->add_key(",", TokenType::COMMA);
+            ac_automaton->add_key(":", TokenType::COLON);
 		}
 
 		// 变量类型
@@ -43,6 +48,26 @@ Lexer::Lexer(const std::string& text) :
             ac_automaton->add_key("Card", TokenType::CARD);
             ac_automaton->add_key("CardContainer", TokenType::CARD_CONTAINER);
         }
+
+        // 保留关键字
+        {
+            ac_automaton->add_key("if", TokenType::IF);
+            ac_automaton->add_key("else", TokenType::ELSE);
+            ac_automaton->add_key("while", TokenType::WHILE);
+            ac_automaton->add_key("for", TokenType::FOR);
+            ac_automaton->add_key("continue", TokenType::CONTINUE);
+            ac_automaton->add_key("break", TokenType::BREAK);
+            ac_automaton->add_key("return", TokenType::RETURN);
+            ac_automaton->add_key("True", TokenType::TRUE);
+            ac_automaton->add_key("False", TokenType::FALSE);
+        }
+
+        // 状态关键字
+        {
+            ac_automaton->add_key("before", TokenType::BEFORE);
+            ac_automaton->add_key("when", TokenType::WHEN);
+            ac_automaton->add_key("after", TokenType::AFTER);
+        }
 	}
 }
 
@@ -60,7 +85,8 @@ Token Lexer::get_next_token()
 		this->read_char();
 
     // 处理注释
-    if (current_char == '#') {
+    if (current_char == '#') 
+    {
         while (current_char != '\n' && current_char != 0) {
             this->read_char();
         }
@@ -68,25 +94,29 @@ Token Lexer::get_next_token()
     }
 
     // 处理字符串
-    if (current_char == '"' || current_char == '\'') {
+    else if (current_char == '"' || current_char == '\'')
+    {
         char quote_char = current_char;
         this->read_char();
-        while (current_char != quote_char && current_char != 0) {
+        while (current_char != quote_char && current_char != 0) 
+        {
             buffer.push_back(current_char);
             this->read_char();
         }
-        if (current_char == quote_char) {
+        if (current_char == quote_char) 
+        {
             this->read_char();
             return Token(TokenType::STRING, buffer);
         }
-        else {
+        else 
+        {
             std::cerr << "Error: 不匹配的字符串" << std::endl;
             return Token(TokenType::UNKNOWN, buffer);
         }
     }
 
     // 尝试读取多字符标记
-    if (isalpha(current_char) || current_char == '_')
+    else if (isalpha(current_char) || current_char == '_')
     {
         while (isalpha(current_char) || current_char == '_' || isdigit(current_char))
         {
@@ -95,23 +125,44 @@ Token Lexer::get_next_token()
         }
         type = ac_automaton->find_key(buffer); // 使用AC自动机查找关键字
         if (type == TokenType::UNKNOWN)
-        {
             return Token(TokenType::IDENTIFIER, buffer); // 处理标识符
+        else if (type == TokenType::FUNC)
+        {
+            this->read_char(); // 函数声明
+            return Token(TokenType::FUNC, buffer);
         }
     }
+
+    // 处理代码块
+    else if (current_char == '{') 
+    {
+        this->read_char();
+        return Token(TokenType::LBRACE, "{");
+    }
+
+    else if (current_char == '}') 
+    {
+        this->read_char();
+        return Token(TokenType::RBRACE, "}");
+    }
+
     // 处理数字
-    else if (isdigit(current_char)) {
+    else if (isdigit(current_char))
+    {
         // 读取整数部分
-        do {
+        do 
+        {
             buffer.push_back(current_char);
             this->read_char();
         } while (isdigit(current_char));
 
         // 处理小数点
-        if (current_char == '.') {
+        if (current_char == '.') 
+        {
             buffer.push_back(current_char);
             this->read_char();
-            while (isdigit(current_char)) {
+            while (isdigit(current_char)) 
+            {
                 buffer.push_back(current_char);
                 this->read_char();
             }
@@ -120,57 +171,27 @@ Token Lexer::get_next_token()
 
         return Token(TokenType::INTEGER, buffer); // 返回整数
     }
-    // 添加分号处理
+
+    // 处理分号
     else if (current_char == ';')
     {
         this->read_char();
         return Token(TokenType::SEMICOLON, ";");
     }
-    // 处理单字符运算符和其他符号
-    else {
-        switch (current_char){
-        case '+':
-            this->read_char();
-            return Token(TokenType::PLUS, "+");
-        case '-':
-            this->read_char();
-            return Token(TokenType::MINUS, "-");
-        case '*':
-            this->read_char();
-            return Token(TokenType::MUL, "*");
-        case '/':
-            this->read_char();
-            return Token(TokenType::DIV, "/");
-        case '(':
-            this->read_char();
-            return Token(TokenType::LPAREN, "(");
-        case ')':
-            this->read_char();
-            return Token(TokenType::RPAREN, ")");
-        case '=':
-            buffer.push_back(current_char);
-            this->read_char();
-            if (current_char == '=')
-            {
-                buffer.push_back(current_char);
-                this->read_char();
-                return Token(TokenType::EQUAL, "==");
-            }
-            else
-            {
-                return Token(TokenType::ASSIGN, "=");
-            }
-        default:
-            if (current_char != 0)
-                std::cerr << "Unknown Token '" << current_char << "'" << std::endl;
-            this->read_char();
-            return Token(TokenType::UNKNOWN, buffer);
-        }
-    }
 
     // 处理完所有token后，返回结束状态
-    if (current_char == 0)
+    else if (current_char == 0)
         return Token(TokenType::EOF_TOKEN, "");
+
+    // 处理单字符运算符和其他符号
+    else
+    {
+        std::string symbol(1, current_char);
+        type = ac_automaton->find_key(symbol);
+        this->read_char();
+        return Token(type, symbol);
+    }
+
 
     return Token(type, buffer);
 }

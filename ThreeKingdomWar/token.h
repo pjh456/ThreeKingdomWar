@@ -17,10 +17,14 @@ enum class TokenType
 	EQUAL,	// ==
 
 	// 标识符
-	LPAREN,	// (
-	RPAREN, // )
+	LPAREN,		// (
+	RPAREN,		// )
 	SEMICOLON,	// ;
 	DEFINATION, // # 注释
+	LBRACE,		// {
+	RBRACE,		// }
+	COMMA,		// ,
+	COLON,		// :
 
 	// 变量类型
 	INT,	// 整数
@@ -29,6 +33,7 @@ enum class TokenType
 	VOID,	// 空值
 	FUNC,	// 函数
 	STRING, // 字符串
+	LIST,	// 列表
 	
 	// 抽象定义
 	IDENTIFIER,	// 变量
@@ -39,7 +44,23 @@ enum class TokenType
 	PLAYER,			// 玩家
 	STATE,			// 状态
 	CARD,			// 卡牌
-	CARD_CONTAINER	// 牌堆
+	CARD_CONTAINER,	// 牌堆
+
+	// 保留关键字
+	IF,
+	ELSE,
+	WHILE,
+	FOR,
+	CONTINUE,
+	BREAK,
+	RETURN,
+	TRUE,
+	FALSE,
+
+	// 状态关键字
+	BEFORE,
+	WHEN,
+	AFTER
 
 };
 

@@ -19,11 +19,14 @@ private:
     Lexer& lexer;
     Token current_token;
 
+    int parse_function_declearation(); //解析函数声明
+
+
     int parse_statement();  // 解析语句
     int parse_expression(); // 解析表达式
     int parse_term();       // 解析项（乘法）
     int parse_factor();     // 解析因子（括号表达式）
-    void advance();         // 移动到下一个token
+    void eat(TokenType expected_type);         // 预期token消耗
 };
 
 #endif // !_PARSER_H_
