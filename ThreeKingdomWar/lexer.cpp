@@ -15,6 +15,8 @@ Lexer::Lexer(const std::string& text) :
 			ac_automaton->add_key("*", TokenType::MUL);
 			ac_automaton->add_key("/", TokenType::DIV);
 			ac_automaton->add_key("=", TokenType::ASSIGN);
+            ac_automaton->add_key("<", TokenType::LESS_THAN);
+            ac_automaton->add_key(">", TokenType::GREATER_THAN);
 		}
 
 		// 标识符
@@ -27,6 +29,8 @@ Lexer::Lexer(const std::string& text) :
             ac_automaton->add_key("}", TokenType::RBRACE);
             ac_automaton->add_key(",", TokenType::COMMA);
             ac_automaton->add_key(":", TokenType::COLON);
+            ac_automaton->add_key("[", TokenType::LBRACKET);
+            ac_automaton->add_key("]", TokenType::RBRACKET);
 		}
 
 		// 变量类型
@@ -36,8 +40,14 @@ Lexer::Lexer(const std::string& text) :
 			ac_automaton->add_key("Bool", TokenType::BOOL);
 			ac_automaton->add_key("Void", TokenType::VOID);
 			ac_automaton->add_key("Func", TokenType::FUNC);
-            ac_automaton->add_key("Str", TokenType::STRING);
+            ac_automaton->add_key("String", TokenType::STRING);
 		}
+
+        // 常量类型
+        {
+            ac_automaton->add_key("True", TokenType::BOOL_LITERAL);
+            ac_automaton->add_key("False", TokenType::BOOL_LITERAL);
+        }
 
 		// 抽象定义无固定形态
 
@@ -58,8 +68,6 @@ Lexer::Lexer(const std::string& text) :
             ac_automaton->add_key("continue", TokenType::CONTINUE);
             ac_automaton->add_key("break", TokenType::BREAK);
             ac_automaton->add_key("return", TokenType::RETURN);
-            ac_automaton->add_key("True", TokenType::TRUE);
-            ac_automaton->add_key("False", TokenType::FALSE);
         }
 
         // 状态关键字
@@ -106,7 +114,7 @@ Token Lexer::get_next_token()
         if (current_char == quote_char) 
         {
             this->read_char();
-            return Token(TokenType::STRING, buffer);
+            return Token(TokenType::STRING_LITERAL, buffer);
         }
         else 
         {
@@ -166,10 +174,10 @@ Token Lexer::get_next_token()
                 buffer.push_back(current_char);
                 this->read_char();
             }
-            return Token(TokenType::FLOAT, buffer); // 返回浮点数
+            return Token(TokenType::FLOAT_LITERAL, buffer); // 返回浮点数
         }
 
-        return Token(TokenType::INTEGER, buffer); // 返回整数
+        return Token(TokenType::INT_LITERAL, buffer); // 返回整数
     }
 
     // 处理分号

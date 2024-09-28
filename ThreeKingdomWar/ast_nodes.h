@@ -4,6 +4,8 @@
 #include <vector>
 #include <string>
 #include <iostream>
+#include <variant>
+#include <stdexcept>
 
 #include "token.h"
 
@@ -17,6 +19,13 @@ enum class ASTNodeType
 	VOID,
 	FUNC,
 	STRING,
+	LIST,
+
+	// 高级类型
+	PLAYER,
+	STATE,
+	CARD,
+	CARD_CONTAINER,
 
 	// 抽象类型
 	IDENTIFIER,			// 变量
@@ -84,6 +93,11 @@ public:
 		return value;
 	}
 
+	friend std::ostream& operator<<(std::ostream& os, const IntegerNode& node)
+	{
+		return os << "IntegerNode<" << node.value << ">";
+	}
+
 private:
 	int value;
 };
@@ -102,6 +116,11 @@ public:
 	float get_value() const
 	{
 		return value;
+	}
+
+	friend std::ostream& operator<<(std::ostream& os, const FloatNode& node)
+	{
+		return os << "FloatNode<" << node.value << ">";
 	}
 
 private:
@@ -124,6 +143,12 @@ public:
 		return value;
 	}
 
+
+	friend std::ostream& operator<<(std::ostream& os, const StringNode& node)
+	{
+		return os << "StringNode<" << node.value << ">";
+	}
+
 private:
 	std::string value;
 };
@@ -144,14 +169,41 @@ public:
 		return value;
 	}
 
+	friend std::ostream& operator<<(std::ostream& os, const BooleanNode& node)
+	{
+		return os << "BooleanNode<" << node.value << ">";
+	}
+
 private:
 	bool value;
+};
+
+class ListNode :public ASTNode
+{
+public:
+	ListNode(const std::vector<ASTNode*>& elements) : elements(elements) {}
+
+	ASTNodeType get_type() const override
+	{
+		return ASTNodeType::LIST;
+	}
+
+	const std::vector<ASTNode*>& get_elements() const
+	{
+		return elements;
+	}
+
+private:
+	std::vector<ASTNode*> elements; // 存储元素的 AST 节点
+
 };
 
 // 变量标识符节点（整合其他基本类型）
 class IdentifierNode :public ASTNode
 {
 public:
+	IdentifierNode(const std::string& name) :
+		name(name) {}
 	IdentifierNode(const std::string& name, ASTNode* value): 
 		name(name), value(value) {}
 
@@ -185,7 +237,7 @@ private:
 class BinaryExpressionNode : public ASTNode
 {
 public:
-	BinaryExpressionNode(ASTNode* left, TokenType op, ASTNode* right) :
+	BinaryExpressionNode(ASTNode* left, Token op, ASTNode* right) :
 		left(left), op(op), right(right) {}
 
 	ASTNodeType get_type() const override
@@ -198,7 +250,7 @@ public:
 		return left;
 	}
 
-	TokenType get_operator() const
+	Token get_operator() const
 	{
 		return op;
 	}
@@ -210,7 +262,7 @@ public:
 
 private:
 	ASTNode* left;
-	TokenType op;
+	Token op;
 	ASTNode* right;
 };
 
@@ -326,6 +378,39 @@ private:
 	BlockNode* block;
 };
 
+// 循环节点
+class ForStatementNode : public ASTNode
+{
+public:
+	ForStatementNode(IdentifierNode* object, IdentifierNode* objects, BlockNode* block)
+		: object(object), objects(objects), block(block) {}
+
+	ASTNodeType get_type() const override
+	{
+		return ASTNodeType::FOR_STATEMENT;
+	}
+
+	IdentifierNode* get_object() const
+	{
+		return object;
+	}
+
+	ASTNode* get_objects() const
+	{
+		return objects;
+	}
+
+	BlockNode* get_block() const
+	{
+		return block;
+	}
+
+private:
+	IdentifierNode* object;
+	IdentifierNode* objects;
+	BlockNode* block;
+};
+
 // 函数声明节点
 class FunctionDeclarationNode : public ASTNode {
 public:
@@ -380,42 +465,23 @@ public:
 		return arguments;
 	}
 
+
 private:
 	std::string name;
 	std::vector<ASTNode*> arguments;
 };
 
-// 循环节点
-class ForStatementNode : public ASTNode 
+class PrintCallNode :public FunctionCallNode
 {
 public:
-	ForStatementNode(IdentifierNode* object, ASTNode* objects, BlockNode* block)
-		: object(object), objects(objects), block(block) {}
+	PrintCallNode(const std::vector<ASTNode*>& arguments): FunctionCallNode("print", arguments) {}
 
-	ASTNodeType get_type() const override 
+	void execute()
 	{
-		return ASTNodeType::FOR_STATEMENT;
+		for (ASTNode* arg : get_arguments()) {
+			std::cout << arg << std::endl; // 打印值
+		}
 	}
-
-	IdentifierNode* get_object() const 
-	{
-		return object;
-	}
-
-	ASTNode* get_objects() const 
-	{
-		return objects;
-	}
-
-	BlockNode* get_block() const 
-	{
-		return block;
-	}
-
-private:
-	IdentifierNode* object;
-	ASTNode* objects;
-	BlockNode* block;
 };
 
 // continue语句节点

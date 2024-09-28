@@ -14,12 +14,12 @@ public:
 	VariableManager() = default;
 	~VariableManager() = default;
 
-	void add_variable(IdentifierNode* variable)
+	void define(const std::string& name, ASTNode* value)
 	{
-		variable_pool[variable->get_name()] = variable;
+		variable_pool[name] = new IdentifierNode(name, value);
 	}
 
-	IdentifierNode* get_variable(const std::string& name)
+	IdentifierNode* get(const std::string& name)
 	{
 		return variable_pool[name];
 	}

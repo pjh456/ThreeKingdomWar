@@ -15,6 +15,8 @@ enum class TokenType
 	DIV,	// /
 	ASSIGN,	// =
 	EQUAL,	// ==
+	LESS_THAN,		// <
+	GREATER_THAN,	// >
 
 	// 标识符
 	LPAREN,		// (
@@ -25,19 +27,29 @@ enum class TokenType
 	RBRACE,		// }
 	COMMA,		// ,
 	COLON,		// :
+	LBRACKET,	// [
+	RBRACKET,	// ]
 
 	// 变量类型
-	INT,	// 整数
-	FLOAT,	// 浮点数
-	BOOL,	// 布尔值
-	VOID,	// 空值
-	FUNC,	// 函数
-	STRING, // 字符串
-	LIST,	// 列表
+	INT,	// 整数类型
+	FLOAT,	// 浮点数类型
+	BOOL,	// 布尔值类型
+	VOID,	// 空值类型
+	FUNC,	// 函数类型
+	STRING, // 字符串类型
+	LIST,	// 列表类型
+
+	// 常量类型
+	INT_LITERAL,	// 整数
+	FLOAT_LITERAL,	// 浮点数
+	BOOL_LITERAL,	// 布尔值
+	VOID_LITERAL,	// 空值
+	FUNC_LITERAL,	// 函数
+	STRING_LITERAL, // 字符串
+	LIST_LITERAL,	// 列表
 	
 	// 抽象定义
 	IDENTIFIER,	// 变量
-	INTEGER,	// 数字
 	EOF_TOKEN,	// 结束标记
 
 	// 高级类型
@@ -54,13 +66,14 @@ enum class TokenType
 	CONTINUE,
 	BREAK,
 	RETURN,
-	TRUE,
-	FALSE,
 
 	// 状态关键字
 	BEFORE,
 	WHEN,
-	AFTER
+	AFTER,
+
+	// 函数
+	PRINT
 
 };
 
