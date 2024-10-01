@@ -29,6 +29,7 @@ enum class TokenType
 	COLON,		// :
 	LBRACKET,	// [
 	RBRACKET,	// ]
+	LINE,		// \n
 
 	// 变量类型
 	INT,	// 整数类型

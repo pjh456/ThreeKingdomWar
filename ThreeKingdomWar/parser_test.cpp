@@ -15,7 +15,7 @@ namespace Tests
             std::cout << "Parsing successful!" << std::endl;
         }
         catch (const std::exception& e) {
-            std::cerr << "Parsing error: " << e.what() << std::endl;
+            std::cerr << "Parsing error: \n" << e.what() << std::endl;
         }
     }
 

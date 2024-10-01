@@ -44,8 +44,12 @@ ASTNode* Parser::parse()
             eat(TokenType::RBRACE);
             break;
 
+        case TokenType::LINE:
+            eat(TokenType::LINE);
+            break;
+
         default:
-            throw std::runtime_error("Unexpected token: " + current_token.value);
+            throw std::runtime_error(std::to_string(lexer.pointer) + " line error: Unexpected token: " + current_token.value);
         }
     }
 }
@@ -114,6 +118,10 @@ ASTNode* Parser::parse_statement()
         {
             eat(TokenType::SEMICOLON);
             return nullptr;
+        }
+        else
+        {
+            throw std::runtime_error(std::to_string(lexer.pointer) + " line error: Unknown sentence.");
         }
     }
 
@@ -217,9 +225,12 @@ ASTNode* Parser::parse_statement()
         std::vector<ASTNode*> then_block_statements;
 
         while (current_token.type != TokenType::RBRACE)
-            then_block_statements.push_back(parse_statement()); // 处理 if 体
+        {
+            ASTNode* statement = parse_statement();
+            if (statement)
+                then_block_statements.push_back(statement); // 处理 if 体
+        }
         BlockNode* then_block = new BlockNode(then_block_statements);
-
         eat(TokenType::RBRACE);
 
         // 可选的 else 处理
@@ -262,7 +273,17 @@ ASTNode* Parser::parse_statement()
         return parse_list(); // 解析列表
     }
 
-    throw std::runtime_error("Expected a statement");
+    else if (current_token.type == TokenType::LINE)
+    {
+        eat(TokenType::LINE);
+        return nullptr;
+    }
+    else
+    {
+        std::cout << current_token.value;
+        throw std::runtime_error(std::to_string(lexer.pointer) + " line error: Expected a statement");
+    }
+    //std::cout << StatementError();
 }
 
 ASTNode* Parser::parse_expression()
@@ -337,8 +358,14 @@ ASTNode* Parser::parse_factor()
         eat(TokenType::RPAREN);
         return result;
     }
+    else if (current_token.type == TokenType::LINE)
+    {
+        eat(TokenType::LINE);
+        parse_factor();
+    }
     else if(current_token.type != TokenType::EOF_TOKEN){
-        throw std::runtime_error("Expected an integer or '('");
+        std::cout << static_cast<int>(current_token.type) << (current_token.type == TokenType::INT);
+        throw std::runtime_error(std::to_string(lexer.pointer) + " line error: Expected an integer or '('");
     }
     return 0;
 }
@@ -354,7 +381,7 @@ ASTNode* Parser::parse_list()
         if (current_token.type == TokenType::COMMA)
             eat(TokenType::COMMA);
         else if (current_token.type != TokenType::RBRACKET)
-            throw std::runtime_error("Expected ',' or ']'");
+            throw std::runtime_error(std::to_string(lexer.pointer) + " line error: Expected ',' or ']'");
     }
 
     eat(TokenType::RBRACKET);
@@ -363,8 +390,17 @@ ASTNode* Parser::parse_list()
 }
 
 void Parser::eat(TokenType expected_type) {
-    if(current_token.type == expected_type)
+    //std::cout << (current_token.value) << std::endl;
+    if (current_token.type == TokenType::LINE)
+    {
+        //std::cout << "get!";
+        lexer.pointer += 1;
+        current_token = lexer.get_next_token();
+        if(expected_type != TokenType::LINE)
+            eat(expected_type);
+    }
+    else if(current_token.type == expected_type)
         current_token = lexer.get_next_token();
     else
-        throw std::runtime_error(lexer.pointer + "line error: Unexpected token in " + current_token.value);
+        throw std::runtime_error(std::to_string(lexer.pointer) + " line error: Unexpected token in " + current_token.value);
 }

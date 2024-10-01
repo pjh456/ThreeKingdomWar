@@ -9,6 +9,7 @@
 #include "token.h"
 #include "lexer.h"
 #include "ast_nodes.h"
+#include "exceptions.h"
 
 class Parser {
 public:

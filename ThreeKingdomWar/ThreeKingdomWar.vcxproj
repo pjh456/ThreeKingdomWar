@@ -129,17 +129,23 @@
   <ItemGroup>
     <ClInclude Include="ac_automaton.h" />
     <ClInclude Include="ast_nodes.h" />
+    <ClInclude Include="base_exception.h" />
+    <ClInclude Include="exceptions.h" />
     <ClInclude Include="interpreter.h" />
     <ClInclude Include="lexer.h" />
+    <ClInclude Include="base_message.h" />
     <ClInclude Include="parser.h" />
     <ClInclude Include="token.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ac_automaton_test.cpp" />
     <ClCompile Include="ast_nodes.cpp" />
+    <ClCompile Include="base_exception.cpp" />
+    <ClCompile Include="exceptions.cpp" />
     <ClCompile Include="interpreter.cpp" />
     <ClCompile Include="lexer.cpp" />
     <ClCompile Include="lexer_test.cpp" />
+    <ClCompile Include="base_message.cpp" />
     <ClCompile Include="parser.cpp" />
     <ClCompile Include="parser_test.cpp" />
     <ClCompile Include="token_test.cpp" />

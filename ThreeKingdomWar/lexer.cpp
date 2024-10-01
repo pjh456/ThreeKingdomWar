@@ -31,6 +31,7 @@ Lexer::Lexer(const std::string& text) :
             ac_automaton->add_key(":", TokenType::COLON);
             ac_automaton->add_key("[", TokenType::LBRACKET);
             ac_automaton->add_key("]", TokenType::RBRACKET);
+            ac_automaton->add_key("\n", TokenType::LINE);
 		}
 
 		// 变量类型
@@ -89,8 +90,17 @@ Token Lexer::get_next_token()
 	TokenType type = TokenType::UNKNOWN;
 
 	// 跳过空格
-	while (isspace(current_char))
+    while (isspace(current_char))
+    {
+        if (current_char == '\n')
+        {
+            //std::cout << "?";
+            this->read_char();
+            return Token(TokenType::LINE, "\n");
+        }
 		this->read_char();
+    }
+
 
     // 处理注释
     if (current_char == '#') 
@@ -187,13 +197,16 @@ Token Lexer::get_next_token()
         return Token(TokenType::SEMICOLON, ";");
     }
 
+
     else if (current_char == '\n')
     {
-        pointer += 1;
+        std::cout << "?";
     }
+
     // 处理完所有token后，返回结束状态
     else if (current_char == 0)
         return Token(TokenType::EOF_TOKEN, "");
+
 
     // 处理单字符运算符和其他符号
     else

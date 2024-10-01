@@ -25,6 +25,18 @@
     <Filter Include="源文件\tests\interpreters_tests">
       <UniqueIdentifier>{bacf47d7-2ddb-4283-b88d-fa0e21f4e8bd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="头文件\Messages">
+      <UniqueIdentifier>{2cddd63e-9309-4682-b52a-185f51cfac3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\Exceptions">
+      <UniqueIdentifier>{96e72bc0-43d9-43d7-8739-fcc0b9639b45}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Messages">
+      <UniqueIdentifier>{9581c28f-59c1-4cf2-bb33-60d3b8387a80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\Exceptions">
+      <UniqueIdentifier>{2e2df6ed-afec-466e-8683-5cd34e8d27d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lexer.h">
@@ -44,6 +56,15 @@
     </ClInclude>
     <ClInclude Include="interpreter.h">
       <Filter>头文件\Interpreters</Filter>
+    </ClInclude>
+    <ClInclude Include="base_exception.h">
+      <Filter>头文件\Exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="base_message.h">
+      <Filter>头文件\Messages</Filter>
+    </ClInclude>
+    <ClInclude Include="exceptions.h">
+      <Filter>头文件\Exceptions</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -70,6 +91,15 @@
     </ClCompile>
     <ClCompile Include="interpreter.cpp">
       <Filter>源文件\Interpreters</Filter>
+    </ClCompile>
+    <ClCompile Include="base_message.cpp">
+      <Filter>源文件\Messages</Filter>
+    </ClCompile>
+    <ClCompile Include="base_exception.cpp">
+      <Filter>源文件\Exceptions</Filter>
+    </ClCompile>
+    <ClCompile Include="exceptions.cpp">
+      <Filter>源文件\Exceptions</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
