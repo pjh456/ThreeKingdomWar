@@ -42,9 +42,6 @@
     <ClInclude Include="ast_nodes.h">
       <Filter>头文件\Interpreters</Filter>
     </ClInclude>
-    <ClInclude Include="variable_table.h">
-      <Filter>头文件\Interpreters</Filter>
-    </ClInclude>
     <ClInclude Include="interpreter.h">
       <Filter>头文件\Interpreters</Filter>
     </ClInclude>

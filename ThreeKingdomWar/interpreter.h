@@ -8,7 +8,6 @@
 #include "lexer.h"
 #include "ast_nodes.h"
 #include "parser.h"
-#include "variable_table.h"
 
 
 class Interpreter
@@ -17,7 +16,11 @@ public:
     Interpreter();
     void interpret(ASTNode* node);
 
+    BlockNode* get_block() const;
+    void set_block(BlockNode* block);
+
 private:
+
     void evaluate(ASTNode* node);
 
     void handle_identifier(IdentifierNode* node);
@@ -32,7 +35,8 @@ private:
     void handle_return_statement(ReturnStatementNode* node);
 
 private:
-    VariableTable variable_table;
+    BlockNode* block;
+
 };
 
 #endif // !_INTERPRETER_H_

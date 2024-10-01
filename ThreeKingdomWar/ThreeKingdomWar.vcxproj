@@ -133,7 +133,6 @@
     <ClInclude Include="lexer.h" />
     <ClInclude Include="parser.h" />
     <ClInclude Include="token.h" />
-    <ClInclude Include="variable_table.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ac_automaton_test.cpp" />

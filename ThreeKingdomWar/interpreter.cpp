@@ -5,11 +5,23 @@ Interpreter::Interpreter()
 
 }
 
+
 void Interpreter::interpret(ASTNode* node)
 {
     if (node)
         evaluate(node);
 }
+
+BlockNode* Interpreter::get_block() const
+{
+    return this->block;
+}
+
+void Interpreter::set_block(BlockNode* block)
+{
+    this->block = block;
+}
+
 
 void Interpreter::evaluate(ASTNode* node)
 {
@@ -63,7 +75,7 @@ void Interpreter::evaluate(ASTNode* node)
 
 void Interpreter::handle_identifier(IdentifierNode* node) {
     const std::string& name = node->get_name();
-    ASTNode* value_node = variable_table.get(name);
+    ASTNode* value_node = block->get(name);
     if (value_node) {
         evaluate(value_node);
     }
@@ -72,14 +84,17 @@ void Interpreter::handle_identifier(IdentifierNode* node) {
     }
 }
 
+// 处理赋值
 void Interpreter::handle_assignment(AssignmentNode* node) {
     const std::string& name = node->get_identifier()->get_name();
     ASTNode* value = node->get_value();
     evaluate(value); // 计算赋值右边的值
-    variable_table.define(name, value); // 更新符号表
+    block->define(name, value); // 更新符号表
+
 }
 
-void Interpreter::handle_block(BlockNode* block) {
+void Interpreter::handle_block(BlockNode* block)
+{
     for (ASTNode* statement : block->get_statements())
         evaluate(statement);
 }
@@ -109,20 +124,22 @@ ASTNode* Interpreter::evaluate_binary_expression(BinaryExpressionNode* node) {
     case TokenType::GREATER_THAN:
         break;
     }
+
+    return nullptr;
 }
 
+// 处理一元表达式（例如，负号）
 void Interpreter::evaluate_unary_expression(UnaryExpressionNode* node) {
-    // 处理一元表达式（例如，负号）
     ASTNode* expression = node->get_expression();
+
     evaluate(expression);
-    // 这里添加具体的操作
+
+
     TokenType op = node->get_operator();
 
     switch (op) {
     case TokenType::MINUS:
         break;
-    default:
-
     }
 }
 
@@ -130,8 +147,6 @@ void Interpreter::handle_function_call(FunctionCallNode* node) {
     const std::string& name = node->get_name();
     const auto& arguments = node->get_arguments();
 
-    // 在这里查找并调用对应的函数
-    // 你可以在符号表中存储函数的信息
     std::cout << "Calling function: " << name << std::endl;
 
     for (ASTNode* arg : arguments) {
@@ -139,16 +154,13 @@ void Interpreter::handle_function_call(FunctionCallNode* node) {
     }
 }
 
+// 处理条件语句
 void Interpreter::handle_if_statement(IfStatementNode* node) {
-    // 处理条件语句
     ASTNode* condition = node->get_condition();
     BlockNode* then_block = node->get_then_block();
     BlockNode* else_block = node->get_else_block();
 
-    evaluate(condition); // 计算条件
-
-    // 根据条件的值决定执行哪个代码块
-    // 这里需要增加条件判断的逻辑
+    evaluate(condition);
 }
 
 void Interpreter::handle_while_statement(WhileStatementNode* node) {
@@ -160,17 +172,18 @@ void Interpreter::handle_while_statement(WhileStatementNode* node) {
     // 这里需要添加条件判断和循环执行的逻辑
 }
 
-void Interpreter::handle_for_statement(ForStatementNode* node) {
-    // 处理for循环
+// 处理for循环
+void Interpreter::handle_for_statement(ForStatementNode* node)
+{
     IdentifierNode* object = node->get_object();
-    IdentifierNode* objects = node->get_objects();
+    ListNode* objects = node->get_objects();
     BlockNode* block = node->get_block();
 
-    // 循环的逻辑
-    // 这里需要添加循环执行的逻辑
+
 }
 
-void Interpreter::handle_return_statement(ReturnStatementNode* node) {
-    // 处理返回语句
-    // 这里可以处理返回值逻辑
+// 处理返回语句
+void Interpreter::handle_return_statement(ReturnStatementNode* node)
+{
+
 }

@@ -17,6 +17,8 @@ public:
 
 	Token get_next_token();
 
+
+	size_t pointer = 1;		// 行数位置（用于报错）
 private:
 	std::string input;
 

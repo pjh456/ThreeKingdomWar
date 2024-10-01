@@ -187,6 +187,10 @@ Token Lexer::get_next_token()
         return Token(TokenType::SEMICOLON, ";");
     }
 
+    else if (current_char == '\n')
+    {
+        pointer += 1;
+    }
     // 处理完所有token后，返回结束状态
     else if (current_char == 0)
         return Token(TokenType::EOF_TOKEN, "");

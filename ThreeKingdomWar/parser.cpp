@@ -366,5 +366,5 @@ void Parser::eat(TokenType expected_type) {
     if(current_token.type == expected_type)
         current_token = lexer.get_next_token();
     else
-        throw std::runtime_error("Unexpected token: " + current_token.value);
+        throw std::runtime_error(lexer.pointer + "line error: Unexpected token in " + current_token.value);
 }

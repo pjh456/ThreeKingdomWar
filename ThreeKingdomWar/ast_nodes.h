@@ -5,6 +5,7 @@
 #include <string>
 #include <iostream>
 #include <stdexcept>
+#include <unordered_map>
 
 #include "token.h"
 
@@ -54,49 +55,18 @@ class ASTNode
 public:
 	virtual ~ASTNode() = default;
 	virtual ASTNodeType get_type() const = 0;
-	
 };
-
-// 代码块节点
-class BlockNode : public ASTNode 
-{
-public:
-	BlockNode(const std::vector<ASTNode*>& statements) : statements(statements) {}
-
-	ASTNodeType get_type() const override 
-	{
-		return ASTNodeType::BLOCK;
-	}
-
-	const std::vector<ASTNode*>& get_statements() const 
-	{
-		return statements;
-	}
-
-private:
-	std::vector<ASTNode*> statements; // 存储多个语句
-};
-
 // 整数节点
 class IntegerNode : public ASTNode
 {
 public:
 	IntegerNode(int value): value(value){}
 
-	ASTNodeType get_type() const override
-	{
-		return ASTNodeType::INTEGER;
-	}
+	ASTNodeType get_type() const override;
 
-	int get_value() const
-	{
-		return value;
-	}
+	int get_value() const;
 
-	friend std::ostream& operator<<(std::ostream& os, const IntegerNode& node)
-	{
-		return os << "IntegerNode<" << node.value << ">";
-	}
+	friend std::ostream& operator<<(std::ostream& os, const IntegerNode& node);
 
 private:
 	int value;
@@ -108,20 +78,11 @@ class FloatNode : public ASTNode
 public:
 	FloatNode(float value): value(value){}
 
-	ASTNodeType get_type() const override
-	{
-		return ASTNodeType::FLOAT;
-	}
+	ASTNodeType get_type() const override;
 
-	float get_value() const
-	{
-		return value;
-	}
+	float get_value() const;
 
-	friend std::ostream& operator<<(std::ostream& os, const FloatNode& node)
-	{
-		return os << "FloatNode<" << node.value << ">";
-	}
+	friend std::ostream& operator<<(std::ostream& os, const FloatNode& node);
 
 private:
 	float value;
@@ -133,21 +94,11 @@ class StringNode :public ASTNode
 public:
 	StringNode(std::string value): value(value) {}
 
-	ASTNodeType get_type() const override
-	{
-		return ASTNodeType::STRING;
-	}
+	ASTNodeType get_type() const override;
 
-	const std::string& get_value() const
-	{
-		return value;
-	}
+	const std::string& get_value() const;
 
-
-	friend std::ostream& operator<<(std::ostream& os, const StringNode& node)
-	{
-		return os << "StringNode<" << node.value << ">";
-	}
+	friend std::ostream& operator<<(std::ostream& os, const StringNode& node);
 
 private:
 	std::string value;
@@ -159,38 +110,14 @@ class BooleanNode :public ASTNode
 public:
 	BooleanNode(bool value): value(value) {}
 
-	ASTNodeType get_type() const override
-	{
-		return ASTNodeType::BOOL;
-	}
+	ASTNodeType get_type() const override;
 
-	bool get_value() const
-	{
-		return value;
-	}
+	bool get_value() const;
 
-	friend std::ostream& operator<<(std::ostream& os, const BooleanNode& node)
-	{
-		return os << "BooleanNode<" << node.value << ">";
-	}
+	friend std::ostream& operator<<(std::ostream& os, const BooleanNode& node);
 
 private:
 	bool value;
-};
-
-class NumberNode: public ASTNode
-{
-public:
-	NumberNode(const IntegerNode* value) :
-		value((float)value->get_value()) {}
-	NumberNode(const FloatNode* value) :
-		value(value->get_value()) {}
-	NumberNode(const BooleanNode* value) :
-		value((float)value->get_value()) {}
-
-	
-private:
-	float value;
 };
 
 // 列表节点
@@ -199,15 +126,11 @@ class ListNode :public ASTNode
 public:
 	ListNode(const std::vector<ASTNode*>& elements) : elements(elements) {}
 
-	ASTNodeType get_type() const override
-	{
-		return ASTNodeType::LIST;
-	}
+	ASTNodeType get_type() const override;
 
-	const std::vector<ASTNode*>& get_elements() const
-	{
-		return elements;
-	}
+	const std::vector<ASTNode*>& get_elements() const;
+
+	friend std::ostream& operator<<(std::ostream& os, const ListNode& node);
 
 private:
 	std::vector<ASTNode*> elements; // 存储元素的 AST 节点
@@ -219,35 +142,50 @@ class IdentifierNode :public ASTNode
 {
 public:
 	IdentifierNode(const std::string& name) :
-		name(name) {}
+		name(name), value(nullptr) {}
+
 	IdentifierNode(const std::string& name, ASTNode* value): 
 		name(name), value(value) {}
 
-	ASTNodeType get_type() const override
-	{
-		return ASTNodeType::IDENTIFIER;
-	}
+	ASTNodeType get_type() const override;
 
-	const std::string& get_name() const
-	{
-		return name;
-	}
+	const std::string& get_name() const;
 
-	const ASTNode* get_value() const
-	{
-		return value;
-	}
+	const ASTNode* get_value() const;
 
-	friend std::ostream& operator<<(std::ostream& os, const IdentifierNode& node)
-	{
-		return os << "IdentifierNode<" << node.name << ", " << static_cast<int>(node.value->get_type()) << ">";
-	}
-
+	friend std::ostream& operator<<(std::ostream& os, const IdentifierNode& node);
 
 private:
 	std::string name;
 	ASTNode* value;
 };
+
+// 代码块节点
+class BlockNode : public ASTNode
+{
+public:
+	BlockNode(const std::vector<ASTNode*>& statements) : statements(statements) {}
+
+	ASTNodeType get_type() const override;
+
+	const std::vector<ASTNode*>& get_statements() const;
+
+	void define(const std::string& name, ASTNode* value);
+
+	void declare(const std::string& name, ASTNode* func);
+
+	IdentifierNode* get(const std::string& name);
+
+	void call(const std::string& name);
+
+private:
+	std::vector<ASTNode*> statements; // 存储多个语句
+
+	std::unordered_map<std::string, IdentifierNode*> symbol_table;
+	std::unordered_map<std::string, ASTNode*> function_table;//不能用FunctionDeclarationNode，不然会循环依赖
+
+};
+
 
 // 二元表达式节点
 class BinaryExpressionNode : public ASTNode
@@ -256,25 +194,13 @@ public:
 	BinaryExpressionNode(ASTNode* left, Token op, ASTNode* right) :
 		left(left), op(op), right(right) {}
 
-	ASTNodeType get_type() const override
-	{
-		return ASTNodeType::BINARY_EXPRESSION;
-	}
+	ASTNodeType get_type() const override;
 
-	ASTNode* get_left() const
-	{
-		return left;
-	}
+	ASTNode* get_left() const;
 
-	Token get_operator() const
-	{
-		return op;
-	}
+	Token get_operator() const;
 
-	ASTNode* get_right() const
-	{
-		return right;
-	}
+	ASTNode* get_right() const;
 
 private:
 	ASTNode* left;
@@ -289,20 +215,11 @@ public:
 	UnaryExpressionNode(TokenType op, ASTNode* expression):
 		op(op), expression(expression) {}
 
-	ASTNodeType get_type() const override
-	{
-		return ASTNodeType::UNARY_EXPRESSION;
-	}
+	ASTNodeType get_type() const override;
 
-	TokenType get_operator() const
-	{
-		return op;
-	}
+	TokenType get_operator() const;
 
-	ASTNode* get_expression() const
-	{
-		return expression;
-	}
+	ASTNode* get_expression() const;
 	
 private:
 	TokenType op;
@@ -315,20 +232,11 @@ public:
 	AssignmentNode(IdentifierNode* identifier, ASTNode* value)
 		: identifier(identifier), value(value) {}
 
-	ASTNodeType get_type() const override
-	{
-		return ASTNodeType::ASSIGNMENT;
-	}
+	ASTNodeType get_type() const override;
 
-	IdentifierNode* get_identifier() const 
-	{
-		return identifier;
-	}
+	IdentifierNode* get_identifier() const;
 
-	ASTNode* get_value() const 
-	{
-		return value;
-	}
+	ASTNode* get_value() const;
 
 private:
 	IdentifierNode* identifier;
@@ -341,25 +249,13 @@ public:
 	IfStatementNode(ASTNode* condition, BlockNode* then_block, BlockNode* else_block = nullptr)
 		: condition(condition), then_block(then_block), else_block(else_block) {}
 
-	ASTNodeType get_type() const override 
-	{
-		return ASTNodeType::IF_STATEMENT;
-	}
+	ASTNodeType get_type() const override;
 
-	ASTNode* get_condition() const 
-	{
-		return condition;
-	}
+	ASTNode* get_condition() const;
 
-	BlockNode* get_then_block() const 
-	{
-		return then_block;
-	}
+	BlockNode* get_then_block() const;
 
-	BlockNode* get_else_block() const 
-	{
-		return else_block;
-	}
+	BlockNode* get_else_block() const;
 
 private:
 	ASTNode* condition;
@@ -374,20 +270,11 @@ public:
 	WhileStatementNode(ASTNode* condition, BlockNode* block)
 		: condition(condition), block(block) {}
 
-	ASTNodeType get_type() const override 
-	{
-		return ASTNodeType::WHILE_STATEMENT;
-	}
+	ASTNodeType get_type() const override;
 
-	ASTNode* get_condition() const 
-	{
-		return condition;
-	}
+	ASTNode* get_condition() const;
 
-	BlockNode* get_block() const 
-	{
-		return block;
-	}
+	BlockNode* get_block() const;
 
 private:
 	ASTNode* condition;
@@ -398,32 +285,20 @@ private:
 class ForStatementNode : public ASTNode
 {
 public:
-	ForStatementNode(IdentifierNode* object, IdentifierNode* objects, BlockNode* block)
+	ForStatementNode(IdentifierNode* object, ListNode* objects, BlockNode* block)
 		: object(object), objects(objects), block(block) {}
 
-	ASTNodeType get_type() const override
-	{
-		return ASTNodeType::FOR_STATEMENT;
-	}
+	ASTNodeType get_type() const override;
 
-	IdentifierNode* get_object() const
-	{
-		return object;
-	}
+	IdentifierNode* get_object() const;
 
-	ASTNode* get_objects() const
-	{
-		return objects;
-	}
+	ListNode* get_objects() const;
 
-	BlockNode* get_block() const
-	{
-		return block;
-	}
+	BlockNode* get_block() const;
 
 private:
 	IdentifierNode* object;
-	IdentifierNode* objects;
+	ListNode* objects;
 	BlockNode* block;
 };
 
@@ -433,27 +308,17 @@ public:
 	FunctionDeclarationNode(const std::string& name, const std::vector<IdentifierNode*>& parameters, BlockNode* body)
 		: name(name), parameters(parameters), body(body) {}
 
-	ASTNodeType get_type() const override 
-	{
-		return ASTNodeType::FUNCTION_DECLARATION;
-	}
+	ASTNodeType get_type() const override;
 
-	const std::string& get_name() const 
-	{
-		return name;
-	}
+	const std::string& get_name() const;
 
-	const std::vector<IdentifierNode*>& get_parameters() const 
-	{
-		return parameters;
-	}
+	const std::vector<IdentifierNode*>& get_parameters() const;
 
-	BlockNode* get_body() const 
-	{
-		return body;
-	}
+	BlockNode* get_body() const;
 
 	void call();
+
+	friend std::ostream& operator<<(std::ostream& os, const FunctionDeclarationNode& node);
 
 private:
 	std::string name;
@@ -468,21 +333,13 @@ public:
 	FunctionCallNode(const std::string& name, const std::vector<ASTNode*>& arguments)
 		: name(name), arguments(arguments) {}
 
-	ASTNodeType get_type() const override 
-	{
-		return ASTNodeType::FUNCTION_CALL;
-	}
+	ASTNodeType get_type() const override;
 
-	const std::string& get_name() const 
-	{
-		return name;
-	}
+	const std::string& get_name() const;
 
-	const std::vector<ASTNode*>& get_arguments() const 
-	{
-		return arguments;
-	}
+	const std::vector<ASTNode*>& get_arguments() const;
 
+	friend std::ostream& operator<<(std::ostream& os, const FunctionCallNode& node);
 
 private:
 	std::string name;
@@ -493,20 +350,16 @@ private:
 class ContinueStatementNode : public ASTNode 
 {
 public:
-	ASTNodeType get_type() const override 
-	{
-		return ASTNodeType::CONTINUE_STATEMENT;
-	}
+	ASTNodeType get_type() const override;
+
 };
 
 // break语句节点
 class BreakStatementNode : public ASTNode 
 {
 public:
-	ASTNodeType get_type() const override 
-	{
-		return ASTNodeType::BREAK_STATEMENT;
-	}
+	ASTNodeType get_type() const override;
+
 };
 
 // return语句节点
@@ -515,10 +368,7 @@ class ReturnStatementNode : public ASTNode
 public:
 	//ReturnStatementNode(ASTNode* value = nullptr) : value(value) {}
 
-	ASTNodeType get_type() const override 
-	{
-		return ASTNodeType::RETURN_STATEMENT;
-	}
+	ASTNodeType get_type() const override;
 
 //private:
 	//暂时不考虑返回值部分

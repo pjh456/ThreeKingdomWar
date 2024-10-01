@@ -29,6 +29,7 @@ private:
     ASTNode* parse_factor();     // 解析因子（括号表达式）
     ASTNode* parse_list();
     void eat(TokenType expected_type);         // 预期token消耗
+
 };
 
 #endif // !_PARSER_H_
